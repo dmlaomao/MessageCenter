@@ -8,27 +8,24 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 import message.Message;
-import sendProcess.SendProcess;
-import sendProcessFactory.SendProcessFactory;
+import sendprocess.SendProcess;
+import sendprocessfactory.SendProcessFactory;
 
 /**
- * Multiple sendProcess thread to send for efficiency
+ * Multiple sendprocess thread to send for efficiency
  * Thread pool is used
  * Send messages got from Controller with speed limit
  * Created by guozheng on 16/6/6.
  */
 public abstract class Server extends Thread {
-    protected Logger logger = LogManager.getLogger(Server.class);
-
     public BlockingQueue<Message> messageBlockingQueue;
+
+    protected Logger logger = LogManager.getLogger(Server.class);
     protected SendProcessFactory sendProcessFactory;
     protected ExecutorService pool;
-
     // number of max messages allowed to send per minute
-    protected int maxMsgPerMin;
-
+    protected int maxMsgPerMinute;
     protected AtomicInteger countMsg = new AtomicInteger(0);
-
     // for limit speed
     protected long timeStamp;
 
@@ -40,6 +37,9 @@ public abstract class Server extends Thread {
         messageBlockingQueue.offer(message);
     }
 
+    /**
+     * simulate the send message process with speed limit
+     */
     protected void sendMessageLimitSpeed() {
         timeStamp = System.currentTimeMillis() + 60000;
         while (true) {
@@ -53,7 +53,7 @@ public abstract class Server extends Thread {
                 }
             } else {
                 long currentTime = System.currentTimeMillis();
-                if (currentTime < timeStamp && countMsg.get() < maxMsgPerMin) {
+                if (currentTime < timeStamp && countMsg.get() < maxMsgPerMinute) {
                     SendProcess sendProcess = sendProcessFactory.createSendProcess(message);
                     pool.execute(sendProcess);
                     countMsg.getAndIncrement();
