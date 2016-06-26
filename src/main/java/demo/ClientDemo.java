@@ -4,7 +4,7 @@ import message.HiMessage;
 import message.MailMessage;
 import message.Message;
 import message.ShortMessage;
-import messageCenter.Controller;
+import messagecenter.Controller;
 import server.HiServer;
 import server.MailServer;
 import server.SmsServer;
@@ -15,7 +15,9 @@ import server.SmsServer;
  */
 public class ClientDemo {
 
-    // Simulate creation and send message to message center
+    /**
+     *Simulate creation and send message to message center
+     */
     public class CreateMessage extends Thread {
         @Override
         public void run() {
@@ -35,13 +37,17 @@ public class ClientDemo {
                     try {
                         Thread.sleep(1000);
                     } catch (InterruptedException e) {
-
+                        e.printStackTrace();
                     }
                 }
             }
         }
     }
 
+    /**
+     * start the demo
+     * @param args
+     */
     public static void main(String[] args) {
         Controller controller = Controller.getInstance();
         ClientDemo clientDemo = new ClientDemo();
